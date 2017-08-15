@@ -1,4 +1,4 @@
-package LearningTestNG;
+package learningTestNG;
 
 import java.util.List;
 
@@ -7,8 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
@@ -19,18 +17,23 @@ import org.testng.Assert;
 
 public class LearningTestNG1 {
 	WebDriver driver;
+	LibraryClass lib = new LibraryClass();
 
 	@BeforeSuite
 	public void setDriver() {
-		System.setProperty("webdriver.chrome.driver", "F:\\selenium-java-3.4.0\\chromedriver_win32\\chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", "E:\\Purendra\\Selenium\\chromedriver_win32\\chromedriver.exe");
 		driver = new ChromeDriver();
+		driver.get("http://demosite.center/wordpress/wp-login.php");
 	}
 
 	@BeforeMethod
 	public void launchWebsite() {
-		driver.get("http://demosite.center/wordpress/wp-login.php");
-		driver.findElement(By.id("user_login")).sendKeys("admin");
-		driver.findElement(By.id("user_pass")).sendKeys("demo123");
+		lib.externalTimeMethod(driver, 10, "//*[@id='user_login']");
+		lib.ExcelPath("ExcelInputValues.xlsx");
+		String username = lib.getValueFromExcel(0, 1, 0);
+		String password = lib.getValueFromExcel(0, 1, 1);
+		driver.findElement(By.id("user_login")).sendKeys(username);
+		driver.findElement(By.id("user_pass")).sendKeys(password);
 		driver.findElement(By.id("wp-submit")).click();
 	}
 
@@ -60,9 +63,7 @@ public class LearningTestNG1 {
 	public void logOut() {
 		Actions builder = new Actions(driver);
 		builder.moveToElement(driver.findElement(By.xpath("//*[@id='wp-admin-bar-my-account']"))).perform();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		WebElement element = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='wp-admin-bar-logout']/a")));
+		lib.externalTimeMethod(driver, 5, "//*[@id='wp-admin-bar-logout']/a");
 		driver.findElement(By.xpath("//*[@id='wp-admin-bar-logout']/a")).click();
 	}
 
